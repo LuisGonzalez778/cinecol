@@ -47,8 +47,7 @@ public class IFrmRegistros extends javax.swing.JInternalFrame {
             comboGenero.removeAllItems();
             comboGenero.addItem("Seleccione...");
             lista.clear();
-            
-            // cambiar el call del query al que va a hacer iker
+
             Statement stm = con.createStatement();
             String query = "call MostrarGeneros();";
             ResultSet rs = stm.executeQuery(query);
@@ -65,7 +64,6 @@ public class IFrmRegistros extends javax.swing.JInternalFrame {
         }
     }
     
-    // Esperar a que iker termine el sql para modificarlo bien
     public void guardar(){
         if (!txtNombrePelicula.getText().isEmpty() && comboGenero.getSelectedIndex() > 0 
                 && !txtDirector.getText().isEmpty() && sldDuracion.getValue() > 0) {
@@ -97,9 +95,6 @@ public class IFrmRegistros extends javax.swing.JInternalFrame {
             }
         }
     }
-    
-    // IMPORTANTE PARA GUARDAR LA DURACION EN EL SQL
-    // int duracionMin = sldDuracion.getValue();
     
     
     /**

@@ -30,6 +30,8 @@ public class FrmPrincipal extends javax.swing.JFrame {
         
         if(this.idRole!=1){
             menuReporte.setEnabled(false);
+            menuReporteGeneros.setEnabled(false);
+            menuReporteAnios.setEnabled(false);
         }
     }
 
