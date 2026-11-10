@@ -8,6 +8,7 @@ import formulariosInternos.IFrmRegistros;
 import formulariosInternos.IFrmReporte;
 import formulariosInternos.IFrmReporteAnios;
 import formulariosInternos.IFrmReporteGeneros;
+import objetos.InfoConexion;
 
 /**
  *
@@ -20,15 +21,16 @@ public class FrmPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form FrmPrincipal
      */
-    String user;
-    int idRole;
+    InfoConexion con;
+    int idUser, idProfile;
     
-    public FrmPrincipal(String user, int idRole) {
+    public FrmPrincipal(int idUser, int idProfile) {
         initComponents();
-        this.user = user;
-        this.idRole = idRole;
+        con = new InfoConexion();
+        this.idUser = idUser;
+        this.idProfile = idProfile;
         
-        if(this.idRole!=1){
+        if(this.idProfile!=1){
             menuReporte.setEnabled(false);
             menuReporteGeneros.setEnabled(false);
             menuReporteAnios.setEnabled(false);
@@ -171,7 +173,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new FrmPrincipal(null,0).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new FrmPrincipal(0,0).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

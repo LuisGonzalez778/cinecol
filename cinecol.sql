@@ -2,6 +2,23 @@ drop DATABASE if exists cinecol;
 create database cinecol;
 use cinecol;
 
+create table perfil(
+idPerfil int NOT NULL AUTO_INCREMENT primary key,
+nombrePerfil varchar(45) NOT NULL
+);
+
+INSERT INTO perfil VALUES (1,'ADMINISTRADOR'),(2,'CAJERO');
+
+CREATE TABLE usuario (
+  idUsuario int NOT NULL AUTO_INCREMENT primary key,
+  usr varchar(45) NOT NULL,
+  pass varchar(45) NOT NULL,
+  idPerfil int NOT NULL,
+  FOREIGN KEY (idPerfil) REFERENCES perfil(idPerfil)
+  );
+  
+INSERT INTO usuario VALUES (1,'ADMIN','1234',1),(2,'LGONZA','5678',2),(3,'ICASAD','9012',2);
+
 create table Genero(
     id_genero int primary key,
     nombre_gen varchar(30)
@@ -19,6 +36,25 @@ create table Peliculas(
 
 
 DELIMITER //
+
+CREATE PROCEDURE login(p_usuario VARCHAR(45), p_pass VARCHAR(45))
+BEGIN
+DECLARE v_idUsuario INT;
+    DECLARE v_usuario VARCHAR(45);
+    DECLARE v_idPerfil INT;
+    
+    SELECT idUsuario, idPerfil INTO v_idUsuario, v_idPerfil
+    FROM usuario 
+    WHERE usr = p_usuario AND pass = p_pass
+    LIMIT 1;
+    
+    IF v_idUsuario IS NOT NULL THEN
+        SELECT v_idUsuario AS idUsuario, v_idPerfil AS idPerfil;
+    ELSE
+        SELECT 0 AS idUsuario,  0 AS idPerfil;
+    END IF;
+END;//
+
 create procedure GuardarGeneros(
 p_id_genero int , 
 p_nombre_gen varchar(30)) begin 

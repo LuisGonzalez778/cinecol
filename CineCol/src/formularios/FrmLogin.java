@@ -4,9 +4,13 @@
  */
 package formularios;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import objetos.Usuarios;
+import objetos.InfoConexion;
 
 /**
  *
@@ -19,47 +23,41 @@ public class FrmLogin extends javax.swing.JFrame {
     /**
      * Creates new form FrmLogin
      */
-    ArrayList<Usuarios> listaUsuarios;
-    String user, pass;
-    int idRole;
-    boolean confirmUser=false;
+    
+    InfoConexion con;
+    
     
     public FrmLogin() {
         initComponents();
-        datosIniciales();
-    }
-    
-    public void datosIniciales(){
-        listaUsuarios = new ArrayList();
-        listaUsuarios.add(new Usuarios("LGONZA", "1234", 1));
-        listaUsuarios.add(new Usuarios("ICASAD", "1234", 2));
+        con = new InfoConexion();
         txtUser.setText("");
         txtPass.setText("");
     }
     
-    public void iniciarSesion(){
-        if(!txtUser.getText().isEmpty() 
-                && !String.valueOf(txtPass.getPassword()).isEmpty()){
-            user = txtUser.getText().toUpperCase();
-            pass = String.valueOf(txtPass.getPassword());
-            for (Usuarios usr : listaUsuarios) {
-                if(usr.getUser().equals(user) && usr.getPass().equals(pass)){
-                    confirmUser = true;
-                    idRole= usr.getIdRole();
-                    break;
-                }else{
-                    confirmUser = false;
-                    idRole=0;
+    public void login(){
+        try (Connection conexion = DriverManager.getConnection(con.getUrl(), con.getUsername(), con.getPassword())) {
+            String consulta = "call login(?,?)";
+            try (PreparedStatement ps = conexion.prepareStatement(consulta)) {
+                ps.setString(1, txtUser.getText().toUpperCase());
+                ps.setString(2, String.valueOf(txtPass.getPassword()));
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        int idUsuario = rs.getInt("idUsuario");
+                        int cargo = rs.getInt("idPerfil");
+                        if (idUsuario != 0) {
+                            FrmPrincipal principal = new FrmPrincipal(idUsuario, cargo);
+                            principal.setVisible(true);
+                            this.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error de usuario y/o contraseña", "Baberia", JOptionPane.ERROR_MESSAGE);
+
+                        }
+                    }
                 }
             }
-            
-            if(confirmUser){
-                FrmPrincipal principal = new FrmPrincipal(user, idRole);
-                principal.setVisible(true);
-                this.dispose();
-            }else{
-                JOptionPane.showMessageDialog(rootPane, "Error de Usuario y/o pass");
-            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(rootPane, "Error de sistema, por favor comunicarse con el Administrador. Error: " + e.toString(), "Barberia", JOptionPane.ERROR_MESSAGE);
+
         }
     }
     
@@ -133,7 +131,7 @@ public class FrmLogin extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         // TODO add your handling code here:
-        iniciarSesion();
+        login();
     }//GEN-LAST:event_btnLoginActionPerformed
 
     /**
