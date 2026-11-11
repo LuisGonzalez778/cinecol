@@ -108,10 +108,7 @@ public class IFrmReporteGeneros extends javax.swing.JInternalFrame {
 
         tableReporte.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Nombre Pelicula", "Director", "Duracion (minutos)", "Fecha Estreno"

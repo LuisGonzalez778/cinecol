@@ -16,7 +16,7 @@ CREATE TABLE usuario (
   idPerfil int NOT NULL,
   FOREIGN KEY (idPerfil) REFERENCES perfil(idPerfil)
   );
-  
+
 INSERT INTO usuario VALUES (1,'ADMIN','1234',1),(2,'LGONZA','5678',2),(3,'ICASAD','9012',2);
 
 create table Genero(
@@ -70,18 +70,19 @@ create table VentaEntrada(
 );
 
 insert into Sala(nombre_sala, capacidad) values ('Sala 1', 20);
- 
-insert into Silla(id_sala, codigo) 
-select 1, concat(l.letra, n.num) 
-from (select 'A' letra union select 'B' union select 'C' union select 'D') l
+
+insert into Sala(nombre_sala, capacidad) values
+    ('Sala 2', 20), ('Sala 3', 20), ('Sala 4', 20),
+    ('Sala 5', 20), ('Sala 6', 20);
+
+insert into Silla(id_sala, codigo)
+select s.id_sala, concat(l.letra, n.num)
+from Sala s
+cross join (select 'A' letra union select 'B'
+            union select 'C' union select 'D') l
 cross join (select 1 num union select 2 union select 3
-            union select 4 union select 5) n;
-
-
- 
-/* insert into Funcion(id_pelicula, id_sala, fecha_hora, precio)
-values (1, 1, date_add(now(), interval 1 day), 12000),
-       (1, 1, date_add(now(), interval 2 day), 12000);*/ 
+            union select 4 union select 5) n
+where s.id_sala not in (select distinct id_sala from Silla);
 
 create table AuditoriaVenta(
     id_auditoria int auto_increment primary key,
@@ -194,28 +195,40 @@ begin
  
     return total - vendidas;
 end;//
- 
-drop function if exists IngresosFuncion;//
-create function IngresosFuncion(p_id_funcion int) returns decimal(12,2)
-reads sql data
+
+create or replace view VistaIngresosFuncion as
+select f.id_funcion,
+       p.nombre_completo as pelicula,
+       s.nombre_sala     as sala,
+       f.fecha_hora,
+       f.precio,
+       count(v.id_venta)            as entradas_vendidas,
+       count(v.id_venta) * f.precio as ingresos
+from Funcion f
+inner join Peliculas p on p.id_pelicula = f.id_pelicula
+inner join Sala s      on s.id_sala = f.id_sala
+left join VentaEntrada v on v.id_funcion = f.id_funcion
+group by f.id_funcion, p.nombre_completo, s.nombre_sala,
+f.fecha_hora, f.precio;//
+
+drop procedure if exists ReporteIngresosFuncion;//
+create procedure ReporteIngresosFuncion()
 begin
-    declare total decimal(12,2);
- 
-    select ifnull(f.precio * count(v.id_venta), 0) into total
-    from Funcion f
-    left join VentaEntrada v on v.id_funcion = f.id_funcion
-    where f.id_funcion = p_id_funcion
-    group by f.id_funcion, f.precio;
- 
-    return ifnull(total, 0);
+    select pelicula          as 'Pelicula',
+           sala              as 'Sala',
+           fecha_hora        as 'Funcion',
+           entradas_vendidas as 'Entradas',
+           ingresos          as 'Ingresos'
+    from VistaIngresosFuncion
+    order by fecha_hora desc;
 end;//
 
 drop procedure if exists MostrarFunciones;//
 create procedure MostrarFunciones()
 begin
-    select f.id_funcion, p.nombre_completo as pelicula,
-           s.nombre_sala as sala, f.fecha_hora, f.precio,
-           SillasLibres(f.id_funcion) as libres
+    select f.id_funcion, p.nombre_completo as Pelicula,
+           s.nombre_sala as Sala, f.fecha_hora, f.precio,
+           SillasLibres(f.id_funcion) as Libres
     from Funcion f
     inner join Peliculas p on f.id_pelicula = p.id_pelicula
     inner join Sala s on f.id_sala = s.id_sala
@@ -262,8 +275,8 @@ begin
     inner join Sala s      on f.id_sala = s.id_sala
     inner join Silla si    on v.id_silla = si.id_silla
     inner join usuario u   on v.idUsuario = u.idUsuario
-    where date(v.fecha_venta) between p_desde and p_hasta
-    order by v.fecha_venta;
+    where date(f.fecha_hora) between p_desde and p_hasta
+	order by f.fecha_hora, si.codigo;
 end;//
 
 drop trigger if exists ValidarVenta;//
@@ -299,12 +312,77 @@ begin
             new.idUsuario, 'VENTA');
 end;//
 
-drop trigger if exists BloquearModificacionVenta//
+drop trigger if exists BloquearModificacionVenta;//
 create trigger BloquearModificacionVenta before update on VentaEntrada for each row
 begin
     signal sqlstate '45000'
     set message_text = 'Las ventas registradas no se pueden modificar';
-end//
+end;//
+
+drop procedure if exists ListarPeliculas;//
+create procedure ListarPeliculas()
+begin
+    select id_pelicula, nombre_completo
+    from Peliculas
+    order by nombre_completo;
+end;//
+
+drop procedure if exists ListarSalas;//
+create procedure ListarSalas()
+begin
+    select id_sala, nombre_sala
+    from Sala
+    order by nombre_sala;
+end;//
+
+drop procedure if exists GuardarFuncion;//
+create procedure GuardarFuncion(in p_id_pelicula int, in p_id_sala int,
+                                in p_fecha_hora datetime,
+                                in p_precio decimal(10,2))
+begin
+    insert into Funcion(id_pelicula, id_sala, fecha_hora, precio)
+    values (p_id_pelicula, p_id_sala, p_fecha_hora, p_precio);
+end;//
+
+drop trigger if exists ValidarFuncion;//
+create trigger ValidarFuncion
+before insert on Funcion
+for each row
+begin
+    declare dur int;
+    declare cruces int;
+
+    select duracion into dur
+    from Peliculas where id_pelicula = new.id_pelicula;
+
+    if new.fecha_hora < now() then
+        signal sqlstate '45000'
+        set message_text = 'La fecha y hora de la función ya pasaron';
+    end if;
+
+    if new.precio <= 0 then
+        signal sqlstate '45000'
+        set message_text = 'El precio debe ser mayor que cero';
+    end if;
+
+    select count(*) into cruces
+    from Funcion f
+    inner join Peliculas p on p.id_pelicula = f.id_pelicula
+    where f.id_sala = new.id_sala
+      and new.fecha_hora < date_add(f.fecha_hora,
+                                    interval ifnull(p.duracion, 0) minute)
+      and date_add(new.fecha_hora, interval ifnull(dur, 0) minute)
+          > f.fecha_hora;
+
+    if cruces > 0 then
+        signal sqlstate '45000'
+        set message_text =
+            'Ya hay una función en esa sala en ese horario';
+    end if;
+end;//
+
+
+-- FIN DE LOS PROCEDURE, FUNCIONES, TRIGGERS
 
 
 call GuardarGeneros('1', 'Accion');//
@@ -327,14 +405,13 @@ call GuardarGeneros('17', 'Suspenso');//
 call GuardarGeneros('18', 'Terror');//
 call GuardarGeneros('19', 'Western');//
 
+
+
 insert into Peliculas(nombre_completo, director, duracion, fecha_estreno, id_genero)
 values ('Los Pollitos Dicen', 'Mike Milfort', 67,
         str_to_date('06-07-2007', '%d-%m-%Y'), 15);
 
-insert into Funcion(id_pelicula, id_sala, fecha_hora, precio)
-select min(id_pelicula), 1, date_add(now(), interval 1 day), 12000
-from peliculas;
+insert into Peliculas(nombre_completo, director, duracion, fecha_estreno, id_genero)
+values ('La Vaca Lola', 'Mike Milfort', 69,
+        str_to_date('06-07-2007', '%d-%m-%Y'), 12);
 
-insert into Funcion(id_pelicula, id_sala, fecha_hora, precio)
-select min(id_pelicula), 1, date_add(now(), interval 2 day), 12000
-from peliculas;

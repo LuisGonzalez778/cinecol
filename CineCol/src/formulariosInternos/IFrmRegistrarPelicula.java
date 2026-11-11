@@ -21,7 +21,7 @@ import objetos.Generos;
  *
  * @author gonza
  */
-public class IFrmRegistros extends javax.swing.JInternalFrame {
+public class IFrmRegistrarPelicula extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form IFrmRegistros
@@ -31,7 +31,7 @@ public class IFrmRegistros extends javax.swing.JInternalFrame {
     
     InfoConexion conexion;
     
-    public IFrmRegistros(FrmPrincipal principal) {
+    public IFrmRegistrarPelicula(FrmPrincipal principal) {
         initComponents();
         conexion = new InfoConexion();
         this.principal = principal;

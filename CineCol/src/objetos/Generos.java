@@ -24,6 +24,4 @@ public class Generos {
     public String getGenero() {
         return genero;
     }
-    
-    
 }

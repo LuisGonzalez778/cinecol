@@ -4,10 +4,13 @@
  */
 package formularios;
 
-import formulariosInternos.IFrmRegistros;
-import formulariosInternos.IFrmReporte;
+import formulariosInternos.IFrmRegistrarFuncion;
+import formulariosInternos.IFrmRegistrarVenta;
+import formulariosInternos.IFrmRegistrarPelicula;
+import formulariosInternos.IFrmReportePeliculas;
 import formulariosInternos.IFrmReporteAnios;
 import formulariosInternos.IFrmReporteGeneros;
+import formulariosInternos.IFrmReporteVentas;
 import objetos.InfoConexion;
 
 /**
@@ -31,11 +34,18 @@ public class FrmPrincipal extends javax.swing.JFrame {
         this.idProfile = idProfile;
         
         if(this.idProfile!=1){
+            menuRegistrarFuncion.setEnabled(false);
             menuReporte.setEnabled(false);
             menuReporteGeneros.setEnabled(false);
             menuReporteAnios.setEnabled(false);
+            menuReporteVentas.setEnabled(false);
         }
     }
+    
+    public int getIdUser() {
+        return idUser;
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -51,11 +61,14 @@ public class FrmPrincipal extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuRegistrar = new javax.swing.JMenuItem();
+        menuRegistrarFuncion = new javax.swing.JMenuItem();
+        menuRegistrarVenta = new javax.swing.JMenuItem();
         menuLogout = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         menuReporte = new javax.swing.JMenuItem();
         menuReporteGeneros = new javax.swing.JMenuItem();
         menuReporteAnios = new javax.swing.JMenuItem();
+        menuReporteVentas = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -65,11 +78,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
         cinecolDesktop.setLayout(cinecolDesktopLayout);
         cinecolDesktopLayout.setHorizontalGroup(
             cinecolDesktopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 830, Short.MAX_VALUE)
+            .addGap(0, 1030, Short.MAX_VALUE)
         );
         cinecolDesktopLayout.setVerticalGroup(
             cinecolDesktopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 388, Short.MAX_VALUE)
+            .addGap(0, 497, Short.MAX_VALUE)
         );
 
         jMenu1.setText("Archivo");
@@ -77,6 +90,14 @@ public class FrmPrincipal extends javax.swing.JFrame {
         menuRegistrar.setText("Agregar Registro");
         menuRegistrar.addActionListener(this::menuRegistrarActionPerformed);
         jMenu1.add(menuRegistrar);
+
+        menuRegistrarFuncion.setText("Registrar Funcion");
+        menuRegistrarFuncion.addActionListener(this::menuRegistrarFuncionActionPerformed);
+        jMenu1.add(menuRegistrarFuncion);
+
+        menuRegistrarVenta.setText("Registrar Venta");
+        menuRegistrarVenta.addActionListener(this::menuRegistrarVentaActionPerformed);
+        jMenu1.add(menuRegistrarVenta);
 
         menuLogout.setText("Cerrar Sesion");
         menuLogout.addActionListener(this::menuLogoutActionPerformed);
@@ -97,6 +118,10 @@ public class FrmPrincipal extends javax.swing.JFrame {
         menuReporteAnios.setText("Ver Reporte Por Años");
         menuReporteAnios.addActionListener(this::menuReporteAniosActionPerformed);
         jMenu2.add(menuReporteAnios);
+
+        menuReporteVentas.setText("Ver Reporte Ventas");
+        menuReporteVentas.addActionListener(this::menuReporteVentasActionPerformed);
+        jMenu2.add(menuReporteVentas);
 
         jMenuBar1.add(jMenu2);
 
@@ -125,14 +150,14 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     private void menuRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRegistrarActionPerformed
         // TODO add your handling code here:
-        IFrmRegistros registro = new IFrmRegistros(this);
+        IFrmRegistrarPelicula registro = new IFrmRegistrarPelicula(this);
         cinecolDesktop.add(registro);
         registro.show();
     }//GEN-LAST:event_menuRegistrarActionPerformed
 
     private void menuReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuReporteActionPerformed
         // TODO add your handling code here:
-        IFrmReporte reporte = new IFrmReporte();
+        IFrmReportePeliculas reporte = new IFrmReportePeliculas();
         cinecolDesktop.add(reporte);
         reporte.show();
     }//GEN-LAST:event_menuReporteActionPerformed
@@ -150,6 +175,27 @@ public class FrmPrincipal extends javax.swing.JFrame {
         cinecolDesktop.add(reporte);
         reporte.show();
     }//GEN-LAST:event_menuReporteAniosActionPerformed
+
+    private void menuReporteVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuReporteVentasActionPerformed
+        // TODO add your handling code here:
+        IFrmReporteVentas reporte = new IFrmReporteVentas();
+        cinecolDesktop.add(reporte);
+        reporte.show();
+    }//GEN-LAST:event_menuReporteVentasActionPerformed
+
+    private void menuRegistrarVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRegistrarVentaActionPerformed
+        // TODO add your handling code here:
+        IFrmRegistrarVenta reporte = new IFrmRegistrarVenta(this);
+        cinecolDesktop.add(reporte);
+        reporte.show();
+    }//GEN-LAST:event_menuRegistrarVentaActionPerformed
+
+    private void menuRegistrarFuncionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRegistrarFuncionActionPerformed
+        // TODO add your handling code here:
+        IFrmRegistrarFuncion registro = new IFrmRegistrarFuncion();
+        cinecolDesktop.add(registro);
+        registro.show();
+    }//GEN-LAST:event_menuRegistrarFuncionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -184,8 +230,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem menuLogout;
     private javax.swing.JMenuItem menuRegistrar;
+    private javax.swing.JMenuItem menuRegistrarFuncion;
+    private javax.swing.JMenuItem menuRegistrarVenta;
     private javax.swing.JMenuItem menuReporte;
     private javax.swing.JMenuItem menuReporteAnios;
     private javax.swing.JMenuItem menuReporteGeneros;
+    private javax.swing.JMenuItem menuReporteVentas;
     // End of variables declaration//GEN-END:variables
 }

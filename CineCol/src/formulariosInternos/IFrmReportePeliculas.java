@@ -18,14 +18,14 @@ import objetos.InfoConexion;
  *
  * @author gonza
  */
-public class IFrmReporte extends javax.swing.JInternalFrame {
+public class IFrmReportePeliculas extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form IFrmReporte
      */
     InfoConexion conexion;
     
-    public IFrmReporte() {
+    public IFrmReportePeliculas() {
         initComponents();
         conexion = new InfoConexion();
         mostrarInfo();
@@ -76,10 +76,7 @@ public class IFrmReporte extends javax.swing.JInternalFrame {
 
         tableReporte.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"

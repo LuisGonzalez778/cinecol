@@ -22,6 +22,22 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuRegistrarActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuRegistrarFuncion">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Registrar Funcion"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuRegistrarFuncionActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuRegistrarVenta">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Registrar Venta"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuRegistrarVentaActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuLogout">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Cerrar Sesion"/>
@@ -59,6 +75,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuReporteAniosActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuReporteVentas">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ver Reporte Ventas"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuReporteVentasActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -104,12 +128,12 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="830" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="1030" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="388" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="497" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
