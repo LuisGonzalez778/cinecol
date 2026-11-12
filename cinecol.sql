@@ -381,6 +381,50 @@ begin
     end if;
 end;//
 
+drop trigger if exists ValidarFuncion;//
+create trigger ValidarFuncion
+before insert on Funcion
+for each row
+begin
+    declare dur int;
+    declare estreno date;
+    declare cruces int;
+
+    select duracion, fecha_estreno into dur, estreno
+    from Peliculas where id_pelicula = new.id_pelicula;
+
+    if new.fecha_hora < now() then
+        signal sqlstate '45000'
+        set message_text = 'La fecha y hora de la función ya pasaron';
+    end if;
+
+    if estreno is not null and date(new.fecha_hora) < estreno then
+        signal sqlstate '45000'
+        set message_text =
+            'La función no puede ser antes de la fecha de estreno de la película';
+    end if;
+
+    if new.precio <= 0 then
+        signal sqlstate '45000'
+        set message_text = 'El precio debe ser mayor que cero';
+    end if;
+
+    select count(*) into cruces
+    from Funcion f
+    inner join Peliculas p on p.id_pelicula = f.id_pelicula
+    where f.id_sala = new.id_sala
+      and new.fecha_hora < date_add(f.fecha_hora,
+                                    interval ifnull(p.duracion, 0) minute)
+      and date_add(new.fecha_hora, interval ifnull(dur, 0) minute)
+          > f.fecha_hora;
+
+    if cruces > 0 then
+        signal sqlstate '45000'
+        set message_text =
+            'Ya hay una función en esa sala en ese horario';
+    end if;
+end;//
+
 
 -- FIN DE LOS PROCEDURE, FUNCIONES, TRIGGERS
 
@@ -409,9 +453,9 @@ call GuardarGeneros('19', 'Western');//
 
 insert into Peliculas(nombre_completo, director, duracion, fecha_estreno, id_genero)
 values ('Los Pollitos Dicen', 'Mike Milfort', 67,
-        str_to_date('06-07-2007', '%d-%m-%Y'), 15);
+        str_to_date('06-07-2007', '%d-%m-%Y'), 15);//
 
 insert into Peliculas(nombre_completo, director, duracion, fecha_estreno, id_genero)
 values ('La Vaca Lola', 'Mike Milfort', 69,
-        str_to_date('06-07-2007', '%d-%m-%Y'), 12);
+        str_to_date('06-07-2007', '%d-%m-%Y'), 12);//
 

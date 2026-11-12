@@ -49,14 +49,14 @@ public class FrmLogin extends javax.swing.JFrame {
                             principal.setVisible(true);
                             this.dispose();
                         } else {
-                            JOptionPane.showMessageDialog(null, "Error de usuario y/o contraseña", "Baberia", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Error de usuario y/o contraseña", "", JOptionPane.ERROR_MESSAGE);
 
                         }
                     }
                 }
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(rootPane, "Error de sistema, por favor comunicarse con el Administrador. Error: " + e.toString(), "Barberia", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(rootPane, "Error de sistema, por favor comunicarse con el Administrador. Error: " + e.toString(), "", JOptionPane.ERROR_MESSAGE);
 
         }
     }
