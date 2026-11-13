@@ -350,43 +350,6 @@ before insert on Funcion
 for each row
 begin
     declare dur int;
-    declare cruces int;
-
-    select duracion into dur
-    from Peliculas where id_pelicula = new.id_pelicula;
-
-    if new.fecha_hora < now() then
-        signal sqlstate '45000'
-        set message_text = 'La fecha y hora de la función ya pasaron';
-    end if;
-
-    if new.precio <= 0 then
-        signal sqlstate '45000'
-        set message_text = 'El precio debe ser mayor que cero';
-    end if;
-
-    select count(*) into cruces
-    from Funcion f
-    inner join Peliculas p on p.id_pelicula = f.id_pelicula
-    where f.id_sala = new.id_sala
-      and new.fecha_hora < date_add(f.fecha_hora,
-                                    interval ifnull(p.duracion, 0) minute)
-      and date_add(new.fecha_hora, interval ifnull(dur, 0) minute)
-          > f.fecha_hora;
-
-    if cruces > 0 then
-        signal sqlstate '45000'
-        set message_text =
-            'Ya hay una función en esa sala en ese horario';
-    end if;
-end;//
-
-drop trigger if exists ValidarFuncion;//
-create trigger ValidarFuncion
-before insert on Funcion
-for each row
-begin
-    declare dur int;
     declare estreno date;
     declare cruces int;
 
